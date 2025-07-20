@@ -55,6 +55,30 @@ class PersonRepositoryTest {
         assertNotNull(savedPerson);
         assertEquals(person0.getId(), savedPerson.getId());
     }
+
+    @DisplayName("Given FirstName And LastName when FindByJPQL then Return Person Object")
+    @Test
+    void testGivenFirstNameAndLastName_whenFindByJPQL_thenReturnPersonObject() {
+
+        // Given / Arrange
+
+        Person person0 = new Person("Lucas", "Pereira", "lucas@email.com.br", "Rua 1", "male");
+
+        repository.save(person0);
+
+        String firstName = "Lucas";
+        String lastName = "Pereira";
+
+        // When / Act
+
+        Person savedPerson = repository.findByJPQL(firstName, lastName);
+
+        // Then / Assert
+
+        assertNotNull(savedPerson);
+        assertEquals(firstName, savedPerson.getFirstName());
+        assertEquals(lastName, savedPerson.getLastName());
+    }
     @DisplayName("Given Person Object when Update Person then Return Updated Person Object")
     @Test
     void testGivenPersonObject_whenUpdatePerson_thenReturnUpdatedPersonObject() {
