@@ -1,8 +1,10 @@
 package br.com.erudio.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
+import br.com.erudio.exceptions.CreatePersonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,12 @@ public class PersonServices {
 	public Person create(Person person) {
 
 		logger.info("Creating one person!");
+
+		Optional<Person> savedPerson = repository.findByEmail(person.getEmail());
+
+		if (savedPerson.isPresent()){
+			throw new CreatePersonException("Person already exist with given e-mail: " + person.getEmail());
+		}
 		
 		return repository.save(person);
 	}
