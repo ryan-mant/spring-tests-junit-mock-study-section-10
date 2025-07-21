@@ -1,5 +1,6 @@
 package br.com.erudio.services;
 
+import br.com.erudio.exceptions.CreatePersonException;
 import br.com.erudio.model.Person;
 import br.com.erudio.repositories.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,5 +47,21 @@ public class PersonServicesTest {
     	// Then / Assert
         assertNotNull(savedPerson);
         assertEquals("Lucas", savedPerson.getFirstName());
+    }
+
+    @DisplayName("JUnit test for Given Existing Email when Save Person then Throws Exception")
+    @Test
+    void testGivenExistingEmail_whenSavePerson_thenThrowsException() {
+
+        // Given / Arrange
+        given(repository.findByEmail(anyString())).willReturn(Optional.of(person0));
+
+        // When / Act
+
+        assertThrows(CreatePersonException.class, () -> service.create(person0));
+
+        // Then / Assert
+
+        verify(repository, never()).save(any(Person.class));
     }
 }
