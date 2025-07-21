@@ -35,9 +35,9 @@ public class PersonServicesTest {
     }
 
 
-    @DisplayName("JUnit test for Given Person Object when Save Person Should Return Person Object")
+    @DisplayName("JUnit test for Given Person Object when Save Person then Return Person Object")
     @Test
-    void testGivenPersonObject_whenSavePerson_ShouldReturnPersonObject() {
+    void testGivenPersonObject_whenSavePerson_thenReturnPersonObject() {
 
     	// Given / Arrange
         given(repository.findByEmail(anyString())).willReturn(Optional.empty());
@@ -67,9 +67,9 @@ public class PersonServicesTest {
         verify(repository, never()).save(any(Person.class));
     }
 
-    @DisplayName("JUnit test for Given Persons List when FindAllPersons Then Return Persons List")
+    @DisplayName("JUnit test for Given Persons List when FindAllPersons then Return Persons List")
     @Test
-    void testGivenPersonsList_whenFindAllPersons_ThenReturnPersonsList() {
+    void testGivenPersonsList_whenFindAllPersons_thenReturnPersonsList() {
 
         // Given / Arrange
         Person person1 = new Person("Mateus", "Rodriss", "mateus@email.com.br", "Rua 2", "male");
@@ -84,9 +84,9 @@ public class PersonServicesTest {
         assertEquals(2, personList.size());
     }
 
-    @DisplayName("JUnit test for Given Empty Persons List when FindAllPersons Then Return Empty Persons List")
+    @DisplayName("JUnit test for Given Empty Persons List when FindAllPersons then Return Empty Persons List")
     @Test
-    void testGivenEmptyPersonsList_whenFindAllPersons_ThenReturnEmptyPersonsList() {
+    void testGivenEmptyPersonsList_whenFindAllPersons_thenReturnEmptyPersonsList() {
 
         // Given / Arrange
 
@@ -98,5 +98,20 @@ public class PersonServicesTest {
         // Then / Assert
         assertTrue(personList.isEmpty());
         assertEquals(0, personList.size());
+    }
+
+    @DisplayName("JUnit test for Given Person Id when FindById then Return Person Object")
+    @Test
+    void testGivenPersonId_whenFindById_thenReturnPersonObject() {
+
+        // Given / Arrange
+        given(repository.findById(anyLong())).willReturn(Optional.of(person0));
+
+        // When / Act
+        Person savedPerson = service.findById(1L);
+
+        // Then / Assert
+        assertNotNull(savedPerson);
+        assertEquals("Lucas", savedPerson.getFirstName());
     }
 }
