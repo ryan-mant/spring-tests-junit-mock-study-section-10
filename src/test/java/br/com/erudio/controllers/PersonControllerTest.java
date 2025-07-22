@@ -3,6 +3,7 @@ package br.com.erudio.controllers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -88,5 +89,26 @@ class PersonControllerTest {
                 andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.size()", is(personList.size())));
+    }
+
+    @Test
+    @DisplayName("JUnit test for Given PersonId When FindById then Return Person Object")
+    void testGivenPersonId_WhenFindById_thenReturnPersonObject() throws Exception {
+
+        // Given / Arrange
+        Long personId = 1L;
+        given(service.findById(personId))
+                .willReturn(person);
+
+        // When / Act
+        ResultActions response = mockMvc.perform(get("/person/{id}", personId));
+
+        // Then / Assert
+        response.
+                andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", is(person.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(person.getLastName())))
+                .andExpect(jsonPath("$.email", is(person.getEmail())));
     }
 }
