@@ -5,8 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -110,5 +109,34 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.firstName", is(person.getFirstName())))
                 .andExpect(jsonPath("$.lastName", is(person.getLastName())))
                 .andExpect(jsonPath("$.email", is(person.getEmail())));
+    }
+    @Test
+    @DisplayName("JUnit test for Given Update Person When Update then Return Updated Person Object")
+    void testGivenUpdatePerson_WhenUpdate_thenReturnUpdatedPersonObject() throws Exception {
+
+        // Given / Arrange
+        Long personId = 1L;
+        given(service.findById(personId)).willReturn(person);
+        given(service.update(any(Person.class))).willAnswer((invocation) -> invocation.getArgument(0));
+
+        // When / Act
+        Person updatedPerson = new Person(
+                "Maria",
+                "Helena",
+                "maria@email.com.br",
+                "Rua 2",
+                "female");
+
+        ResultActions response = mockMvc.perform(put("/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatedPerson)));
+
+        // Then / Assert
+        response.
+                andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", is(updatedPerson.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(updatedPerson.getLastName())))
+                .andExpect(jsonPath("$.email", is(updatedPerson.getEmail())));
     }
 }
