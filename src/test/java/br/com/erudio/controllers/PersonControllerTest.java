@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.com.erudio.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -138,5 +139,32 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.firstName", is(updatedPerson.getFirstName())))
                 .andExpect(jsonPath("$.lastName", is(updatedPerson.getLastName())))
                 .andExpect(jsonPath("$.email", is(updatedPerson.getEmail())));
+    }
+
+    @Test
+    @DisplayName("JUnit test for Given Unexistent Person When Update then Return Not Found")
+    void testGivenUnexistentPerson_WhenUpdate_thenReturnNotFound() throws Exception {
+
+        // Given / Arrange
+        Long personId = 1L;
+        given(service.findById(personId)).willThrow(ResourceNotFoundException.class);
+        given(service.update(any(Person.class))).willAnswer((invocation) -> invocation.getArgument(1));
+
+        // When / Act
+        Person updatedPerson = new Person(
+                "Maria",
+                "Helena",
+                "maria@email.com.br",
+                "Rua 2",
+                "female");
+
+        ResultActions response = mockMvc.perform(put("/person")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatedPerson)));
+
+        // Then / Assert
+        response.
+                andExpect(status().isNotFound())
+                .andDo(print());
     }
 }
