@@ -27,7 +27,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
     private static Person person;
 
     @BeforeAll
-    public static void setup(){
+    static void setup(){
         mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
