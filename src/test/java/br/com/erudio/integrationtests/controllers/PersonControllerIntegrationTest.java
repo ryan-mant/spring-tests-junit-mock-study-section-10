@@ -14,6 +14,9 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -117,9 +120,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
     @DisplayName("JUnit integration test for Given Person Id when FindById Should Return A Person Object")
     @Test
     void integrationTestGivenPersonId_when_FindById_ShouldReturnAPersonObject() throws JsonProcessingException {
-
-        person.setFirstName("Kauan");
-        person.setEmail("kauan@email.com.br");
         var content = given()
                 .spec(specification)
                 .pathParam("id", person.getId())
@@ -145,6 +145,52 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals("Rua 1", foundPerson.getAddress());
         assertEquals("male", foundPerson.getGender());
         assertEquals("kauan@email.com.br", foundPerson.getEmail());
+
+    }
+
+    @Order(4)
+    @DisplayName("JUnit integration test for when FindAll Should Return A Person List")
+    @Test
+    void integrationTest_when_FindAll_ShouldReturnAPersonList() throws JsonProcessingException {
+
+        Person person1 = new Person("Joana", "Marques", "joana@email.com.br", "Rua 2", "female");
+
+        given()
+                .spec(specification)
+                .contentType(TestConfig.CONTENT_TYPE_JSON)
+                .body(person1)
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
+
+        var content = given()
+                .spec(specification)
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract().body().asString();
+
+        List<Person> people = Arrays.stream(mapper.readValue(content, Person[].class)).toList();
+
+        Person firstPerson = people.get(0);
+
+        assertTrue(firstPerson.getId() > 0);
+        assertEquals("Kauan", firstPerson.getFirstName());
+        assertEquals("Pereira", firstPerson.getLastName());
+        assertEquals("Rua 1", firstPerson.getAddress());
+        assertEquals("male", firstPerson.getGender());
+        assertEquals("kauan@email.com.br", firstPerson.getEmail());
+
+        Person secondPerson = people.get(1);
+
+        assertTrue(secondPerson.getId() > 0);
+        assertEquals("Joana", secondPerson.getFirstName());
+        assertEquals("Marques", secondPerson.getLastName());
+        assertEquals("Rua 2", secondPerson.getAddress());
+        assertEquals("female", secondPerson.getGender());
+        assertEquals("joana@email.com.br", secondPerson.getEmail());
 
     }
 }
