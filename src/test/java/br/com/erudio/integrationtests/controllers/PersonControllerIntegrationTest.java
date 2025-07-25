@@ -30,7 +30,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
     private static Person person;
 
     @BeforeAll
-    static void setup(){
+    static void setup() {
         mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
@@ -192,5 +192,18 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
         assertEquals("female", secondPerson.getGender());
         assertEquals("joana@email.com.br", secondPerson.getEmail());
 
+    }
+
+    @Order(5)
+    @DisplayName("JUnit integration test for Given Person Id when delete Should Return No content")
+    @Test
+    void integrationTestGivenPersonId_when_Delete_ShouldReturnNoContent() {
+        given()
+            .spec(specification)
+            .pathParam("id", person.getId())
+            .when()
+            .delete("{id}")
+            .then()
+            .statusCode(204);
     }
 }
