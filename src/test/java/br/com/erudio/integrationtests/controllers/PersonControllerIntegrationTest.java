@@ -40,8 +40,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
         person = new Person("Lucas", "Pereira", "lucas@email.com.br", "Rua 1", "male");
     }
 
-    // test[System Under Test]_[Condition or State Change]_[Expected Result]
-    @DisplayName("Display Name")
     @Order(1)
     @DisplayName("JUnit integration test for Given Person Object when Create One Person Should Return A Person Object")
     @Test
